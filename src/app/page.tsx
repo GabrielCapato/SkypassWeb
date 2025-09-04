@@ -12,8 +12,8 @@ export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    usuario: '',
-    senha: '',
+    email: '',
+    password: '',
   });
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function LoginPage() {
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
-      const response = await api.post('/usuario', formData);
+      const response = await api.post('/auth/login', formData);
       
       if (response.status === 200) {
         // Armazenando dados da sessão
@@ -60,8 +60,8 @@ export default function LoginPage() {
         throw new Error('Falha na autenticação');
       }
     } catch (error: any) {
-      console.error('Erro ao fazer login:', error);
-      toast.error(error.response?.data?.message || 'Erro ao fazer login. Tente novamente.');
+      console.error(error);
+      toast.error(error.response?.data?.mensagem || 'Erro ao fazer login. Tente novamente.');
       throw error;
     } finally {
       setIsLoading(false);
@@ -90,17 +90,8 @@ export default function LoginPage() {
       <div className="relative max-w-md w-full mx-4">
         <div className="backdrop-blur-lg bg-white/30 dark:bg-gray-800/30 rounded-2xl shadow-2xl p-8 border border-white/20 dark:border-gray-700/20">
           <div className="text-center">
-            <div className="relative w-32 h-32 mx-auto mb-4">
-              <Image
-                src="/next.svg"
-                alt="Logo"
-                fill
-                className="object-contain dark:invert"
-                priority
-              />
-            </div>
             <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-              Bem-vindo ao Skypass
+              Bem-vindo ao SkyPay
             </h2>
           </div>
 
@@ -112,8 +103,8 @@ export default function LoginPage() {
                 type="email"
                 placeholder="seu@email.com"
                 required
-                value={formData.usuario}
-                onChange={(e) => setFormData({ ...formData, usuario: e.target.value })}
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="backdrop-blur-sm bg-white/50 dark:bg-gray-900/50"
               />
 
@@ -123,8 +114,8 @@ export default function LoginPage() {
                 type="password"
                 placeholder="••••••••"
                 required
-                value={formData.senha}
-                onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="backdrop-blur-sm bg-white/50 dark:bg-gray-900/50"
               />
             </div>

@@ -24,11 +24,11 @@ const CustomInput: React.FC<CustomInputProps> = ({
   ...props
 }) => {
   const sizeClasses = {
-    SM: 'max-w-[8rem]',
-    MD: 'max-w-[12rem]',
-    LG: 'max-w-[16rem]',
-    XL: 'max-w-[20rem]',
-    FULL: 'w-full',
+    SM: ' h-14 max-w-[8rem]',
+    MD: ' h-14 max-w-[12rem]',
+    LG: ' h-14 max-w-[16rem]',
+    XL: ' h-14 max-w-[20rem]',
+    FULL: ' h-14 w-full',
   };
 
   const inputClasses = `

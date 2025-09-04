@@ -7,7 +7,7 @@ interface CustomButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  onClick?: () => Promise<void>;
+  onClick?: () => void | Promise<void>;
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -99,19 +99,24 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 
   const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     if (onClick) {
-      try {
-        setInternalLoading(true);
-        setStatus('idle');
-        await onClick();
-        setInternalLoading(false);
-        setStatus('success');
-      } catch (error) {
-        setInternalLoading(false);
-        setStatus('error');
-      } finally {
-        setTimeout(() => {
+      const result = onClick();
+      
+      // Se o resultado for uma Promise, é uma função assíncrona
+      if (result instanceof Promise) {
+        try {
+          setInternalLoading(true);
           setStatus('idle');
-        }, 2000);
+          await result;
+          setInternalLoading(false);
+          setStatus('success');
+        } catch (error) {
+          setInternalLoading(false);
+          setStatus('error');
+        } finally {
+          setTimeout(() => {
+            setStatus('idle');
+          }, 2000);
+        }
       }
     }
   };

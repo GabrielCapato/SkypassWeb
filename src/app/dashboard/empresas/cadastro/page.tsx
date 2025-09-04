@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import CustomInput from '@/components/CustomInput';
 import CustomButton from '@/components/CustomButton';
 import CustomSelect from '@/components/CustomSelect';
 import { Row, Col } from '@/components/Grid';
+import api from '@/service/SkypassApi';
 
 const estados = [
   { value: 'AC', label: 'Acre' },
@@ -62,6 +63,9 @@ const itemVariants = {
 
 export default function CadastroEmpresa() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const empresaId = searchParams.get('id');
+
   const [formData, setFormData] = useState({
     razaoSocial: '',
     nomeFantasia: '',
@@ -79,6 +83,7 @@ export default function CadastroEmpresa() {
     nomeContato: '',
     emailContato: '',
     telefoneContato: '',
+    URL: ''
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -126,13 +131,20 @@ export default function CadastroEmpresa() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
-    if (validateForm()) {
-      // Aqui você pode implementar a lógica de envio do formulário
-      console.log('Formulário válido:', formData);
-    } else {
-      console.log('Erros de validação:', errors);
+  const handleSubmit = async () => {
+
+    try {
+      if (validateForm()) {
+        const response = await api.post('/empresa/create', formData);
+        console.log('Formulário válido:', response);
+        router.push(`/dashboard/empresas`);
+      } else {
+        console.log('Erros de validação:', errors);
+      }
+    } catch (error) {
+      console.error(error);
     }
+
   };
 
   return (
@@ -194,6 +206,14 @@ export default function CadastroEmpresa() {
                 onChange={(e) => handleChange('inscricaoEstadual', e.target.value)}
               />
             </Col>
+            <Col xs={12} sm={12} md={6} lg={3}>
+              <CustomInput
+                label="URL de acesso"
+                value={formData.URL}
+                required
+                onChange={(e) => handleChange('URL', e.target.value)}
+              />
+            </Col>
           </Row>
         </motion.div>
 
@@ -217,7 +237,7 @@ export default function CadastroEmpresa() {
                 onChange={(e) => handleChange('telefone', e.target.value)}
                 error={errors.telefone}
                 required
-                mask="(99) 99999-9999"
+                mask="(99) 9999-9999"
               />
             </Col>
           </Row>
